@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Search Knowledge Test — Screaming Frog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F5F4F0;--surface:#FFF;--surface2:#EDECE8;--border:#DDDBD4;--border2:#C8C5BB;
+  --text:#1A1916;--text2:#6B6760;--text3:#9B9890;
+  --accent:#1F5C2E;--accent-bg:#E8F2EB;--accent-h:#174823;
+  --warn:#7A4A0C;--warn-bg:#FBF0E0;--warn-b:#D4922A;
+  --green:#2D6A3F;--green-bg:#E4F0E8;--green-b:#7BB88A;
+  --red:#8B2020;--red-bg:#F5E8E8;--red-b:#CC7070;
+  --r:10px;--rs:6px;--sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04)
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:700px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.hdr{display:flex;align-items:center;gap:12px;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.logo{width:40px;height:40px;background:var(--accent);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo svg{width:22px;height:22px;fill:#fff}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.75rem;margin-bottom:1rem;box-shadow:var(--sh)}
+.bdg{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:99px;font-family:'DM Mono',monospace}
+.be{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b)}
+.bm{background:#E8EEF7;color:#274E8C;border:1px solid #A3B8DA}
+.bh{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-b)}
+.bp{background:var(--green-bg);color:var(--green)}
+.bf{background:var(--red-bg);color:var(--red)}
+.bc{background:#F0E8F5;color:#5C2070}
+.bt{background:var(--red-bg);color:var(--red)}
+.tag{display:inline-block;font-size:11px;padding:3px 9px;border-radius:99px;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.btn{border:none;padding:10px 22px;border-radius:var(--rs);font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:6px}
+.btnp{background:var(--accent);color:#fff}.btnp:hover{background:var(--accent-h)}
+.btns{background:var(--surface);color:var(--text);border:1px solid var(--border2)}.btns:hover{background:var(--surface2)}
+input{width:100%;padding:10px 13px;border:1px solid var(--border2);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+input:focus{border-color:var(--accent)}
+.lbl{font-size:13px;font-weight:500;color:var(--text2);display:block;margin-bottom:7px}
+.err{font-size:12px;color:var(--red);margin-top:4px;display:none}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ro{border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;cursor:pointer;transition:all .15s;background:var(--surface)}
+.ro:hover{border-color:var(--border2);background:var(--surface2)}
+.ro.sel{border-color:var(--accent);background:var(--accent-bg)}
+.ro.sel .rt{color:var(--accent)}.ro.sel .rs{color:var(--green)}
+.rt{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.rs{font-size:12px;color:var(--text3)}
+.wbox{background:var(--warn-bg);border:1px solid var(--warn-b);border-radius:var(--rs);padding:10px 14px;font-size:13px;color:var(--warn);margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.pbar{height:3px;background:var(--border);border-radius:99px;overflow:hidden;margin-bottom:1.25rem}
+.pfill{height:100%;background:var(--accent);border-radius:99px;transition:width .3s ease}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;margin-bottom:8px;background:var(--surface);font-size:14px;color:var(--text);transition:background .12s,border-color .12s;line-height:1.5}
+.opt:hover{background:var(--surface2);border-color:var(--border2)}
+.opt.correct{border-color:var(--green-b);background:var(--green-bg);color:var(--green)}
+.opt.wrong{border-color:var(--red-b);background:var(--red-bg);color:var(--red)}
+.ol{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;min-width:18px;color:var(--text3);margin-top:1px;flex-shrink:0}
+.opt.correct .ol,.opt.wrong .ol{color:inherit}
+.exp{display:none;margin-top:1rem;padding:12px 14px;background:var(--surface2);border-radius:var(--rs);font-size:13px;color:var(--text2);line-height:1.65;border-left:3px solid var(--accent)}
+.mgrd{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.met{background:var(--surface2);border-radius:var(--rs);padding:14px 10px;text-align:center;border:1px solid var(--border)}
+.mv{font-size:24px;font-weight:600;color:var(--text);letter-spacing:-.02em}
+.ml{font-size:11px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace}
+.lbr{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.lbr:last-child{border-bottom:none}
+.lbn{font-weight:500;color:var(--text);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.lbsub{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+.ov{display:none;position:fixed;inset:0;background:rgba(15,14,12,.75);z-index:999;align-items:center;justify-content:center;padding:1.5rem}
+.ov.show{display:flex}
+.ovi{background:var(--surface);border-radius:var(--r);padding:2rem;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.ri{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:1rem 1.25rem;margin-bottom:8px;box-shadow:var(--sh)}
+.screen{display:none}.screen.active{display:block}
+.stitle{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:10px;font-family:'DM Mono',monospace;letter-spacing:.02em}
+.fg{display:flex;gap:10px;flex-wrap:wrap}
+.sts{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:10px;min-height:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+    <div>
+      <div style="font-size:15px;font-weight:600;letter-spacing:-.01em">AI Search Knowledge Test</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:1px">Screaming Frog — Agency-wide assessment</div>
+    </div>
+  </div>
+
+  <!-- START -->
+  <div id="ss" class="screen active">
+    <div class="card">
+      <p style="font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:1.25rem">Tests knowledge of our AI Search Optimisation framework. All <strong style="color:var(--text)">50 questions</strong>, randomised order, no time limit. Pass mark depends on your role.</p>
+      <div class="wbox"><span style="font-size:16px;flex-shrink:0">⚠</span><span>Switching browser tabs will be detected. Your quiz will be <strong>closed immediately</strong> and your score submitted up to that point.</span></div>
+      <div style="margin-bottom:1.25rem">
+        <label class="lbl">Your full name</label>
+        <input type="text" id="fn" placeholder="e.g. Jamie Smith"/>
+        <div class="err" id="en">Please enter your name</div>
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <label class="lbl">Your work email</label>
+        <input type="email" id="fe" placeholder="e.g. jamie@screamingfrog.co.uk"/>
+        <div class="err" id="ee">Please enter a valid email address</div>
+      </div>
+      <div style="margin-bottom:1.5rem">
+        <label class="lbl">Your role</label>
+        <div class="rg">
+          <div class="ro" id="r-seo" onclick="selR('seo')"><div class="rt">SEO</div><div class="rs">Pass mark: 80%</div></div>
+          <div class="ro" id="r-pr" onclick="selR('pr')"><div class="rt">PR / Content</div><div class="rs">Pass mark: 60%</div></div>
+        </div>
+        <div class="err" id="er">Please select your role</div>
+      </div>
+      <button class="btn btnp" onclick="startQ()">Start quiz →</button>
+    </div>
+    <div id="lbp"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="sq" class="screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <span class="tag" id="qctr">Question 1 of 50</span>
+      <span style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace" id="qpct">0% complete</span>
+    </div>
+    <div class="pbar"><div class="pfill" id="pf" style="width:0%"></div></div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px">
+        <span style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace" id="qcat"></span>
+        <span id="qdb"></span>
+      </div>
+      <div style="font-size:17px;font-weight:500;color:var(--text);margin-bottom:1.25rem;line-height:1.55;letter-spacing:-.01em" id="qt"></div>
+      <div id="qo"></div>
+      <div class="exp" id="qe"></div>
+    </div>
+    <div style="text-align:right"><button class="btn btnp" id="nb" onclick="nextQ()" style="display:none">Next question →</button></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="sr" class="screen">
+    <div class="card">
+      <div style="font-size:19px;font-weight:600;margin-bottom:4px;letter-spacing:-.02em" id="rtitle"></div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:1.5rem" id="rsub"></div>
+      <div class="mgrd">
+        <div class="met"><div class="mv" id="ms"></div><div class="ml">SCORE</div></div>
+        <div class="met"><div class="mv" id="mp"></div><div class="ml">CORRECT</div></div>
+        <div class="met"><div class="mv" id="mt"></div><div class="ml">TAB SWITCHES</div></div>
+      </div>
+      <div id="rl" style="font-size:12px;color:var(--text3);margin-bottom:.75rem;font-family:'DM Mono',monospace"></div>
+      <div class="sts" id="ems"></div>
+      <div class="fg" style="margin-top:1rem">
+        <button class="btn btns" onclick="showAdmin()">View all results</button>
+        <button class="btn btnp" onclick="resetQ()">Retake quiz</button>
+      </div>
+    </div>
+    <div id="ar"></div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="sa" class="screen">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div style="font-size:15px;font-weight:600;letter-spacing:-.01em">All results</div>
+      <button class="btn btns" onclick="backAdmin()" style="font-size:13px;padding:7px 14px">← Back</button>
+    </div>
+    <div class="card" id="at"></div>
+  </div>
+
+</div>
+
+<!-- TAB OVERLAY -->
+<div class="ov" id="tov">
+  <div class="ovi">
+    <div style="font-size:36px;margin-bottom:1rem">🔒</div>
+    <div style="font-size:17px;font-weight:600;margin-bottom:6px">Quiz closed</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.25rem">A tab switch was detected. Your quiz has been closed and your score submitted up to this point.</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:1.25rem;font-family:'DM Mono',monospace" id="osc"></div>
+    <button class="btn btnp" onclick="fromOverlay()">View my result</button>
+  </div>
+</div>
+
+<script>
+// ─── EmailJS ───────────────────────────────────────────────────────────────────
+// SETUP (5 min, free):
+// 1. https://www.emailjs.com → create account
+// 2. Add Email Service (Gmail) → copy Service ID
+// 3. Create Email Template. Paste these variables in the body:
+//      Name: {{n}}   Email: {{em}}   Role: {{role}}
+//      Score: {{score}}/{{total}} ({{pct}})   Status: {{status}}
+//      Pass mark: {{pm}}   Tab switches: {{tabs}}   Times: {{tabt}}
+//      Completed: {{ts}}
+//      --- ANSWERS ---
+//      {{review}}
+//    Set "To Email": tom.jeffery@screamingfrog.co.uk
+//    Copy Template ID
+// 4. Account → General → copy Public Key
+// 5. Paste all three below and save
+const EJS_SVC = 'YOUR_SERVICE_ID';
+const EJS_TPL = 'YOUR_TEMPLATE_ID';
+const EJS_KEY = 'YOUR_PUBLIC_KEY';
+// ──────────────────────────────────────────────────────────────────────────────
+
+const PM   = {seo:80, pr:60};
+const RLBL = {seo:'SEO', pr:'PR / Content'};
+const SK   = 'sfq_v5';
+
+let role=null;
+let S={name:'',email:'',role:'',cur:0,order:[],answers:[],score:0,cheats:0,ct:[],done:false,inQ:false,closed:false};
+
+const shuf = a=>[...a].sort(()=>Math.random()-.5);
+const $    = id=>document.getElementById(id);
+const show = id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');};
+const loadR= ()=>{try{return JSON.parse(localStorage.getItem(SK)||'[]');}catch(e){return[];}};
+const saveR= e=>{try{const a=loadR();a.push(e);localStorage.setItem(SK,JSON.stringify(a));}catch(e){}};
+
+function selR(r){role=r;document.querySelectorAll('.ro').forEach(el=>el.classList.remove('sel'));$('r-'+r).classList.add('sel');}
+
+function validate(){
+  let ok=true;
+  const name=$('fn').value.trim(), email=$('fe').value.trim(), re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!name){$('en').style.display='block';$('fn').style.borderColor='#cc4444';ok=false;}else{$('en').style.display='none';$('fn').style.borderColor='';}
+  if(!email||!re.test(email)){$('ee').style.display='block';$('fe').style.borderColor='#cc4444';ok=false;}else{$('ee').style.display='none';$('fe').style.borderColor='';}
+  if(!role){$('er').style.display='block';ok=false;}else{$('er').style.display='none';}
+  return ok;
+}
+
+function startQ(){
+  if(!validate())return;
+  S={name:$('fn').value.trim(),email:$('fe').value.trim(),role,cur:0,
+     order:shuf(Q.map((_,i)=>i)),answers:[],score:0,cheats:0,ct:[],done:false,inQ:true,closed:false};
+  show('sq');renderQ();
+}
+
+function renderQ(){
+  const q=Q[S.order[S.cur]],tot=Q.length,pct=Math.round((S.cur/tot)*100);
+  S.done=false;
+  $('qctr').textContent=`Question ${S.cur+1} of ${tot}`;
+  $('qpct').textContent=pct+'% complete';
+  $('pf').style.width=pct+'%';
+  $('qcat').textContent=q.cat;
+  const dm={easy:'Foundation',medium:'Intermediate',hard:'Advanced'};
+  const dc={easy:'be',medium:'bm',hard:'bh'};
+  $('qdb').innerHTML=`<span class="bdg ${dc[q.diff]}">${dm[q.diff]}</span>`;
+  $('qt').textContent=q.q;
+  $('qe').style.display='none';
+  $('nb').style.display='none';
+  const od=$('qo');od.innerHTML='';
+  const sf=shuf(q.opts.map((o,i)=>({t:o,o:i})));q._sf=sf;
+  ['A','B','C','D'].forEach((L,i)=>{
+    const d=document.createElement('div');d.className='opt';
+    d.innerHTML=`<span class="ol">${L}</span><span>${sf[i].t}</span>`;
+    d.onclick=()=>pick(i,sf[i].o);od.appendChild(d);
+  });
+}
+
+function pick(si,oi){
+  if(S.done)return;S.done=true;
+  const q=Q[S.order[S.cur]],ok=oi===q.ans;
+  if(ok)S.score++;
+  S.answers.push({q:q.q,chosen:q.opts[oi],correct:ok,ct:q.opts[q.ans]});
+  const opts=document.querySelectorAll('.opt');
+  opts[si].classList.add(ok?'correct':'wrong');
+  if(!ok)q._sf.forEach((x,i)=>{if(x.o===q.ans)opts[i].classList.add('correct');});
+  const e=$('qe');e.style.display='block';e.textContent=q.exp;
+  $('nb').style.display='inline-flex';
+}
+
+function nextQ(){S.cur++;if(S.cur>=Q.length){finish(false);return;}renderQ();window.scrollTo({top:0,behavior:'smooth'});}
+
+function finish(closed){
+  S.inQ=false;S.closed=closed;
+  const ans=S.answers.length,pct=ans>0?Math.round((S.score/ans)*100):0;
+  const pm=PM[S.role]||70,pass=!closed&&ans===Q.length&&pct>=pm;
+  const entry={name:S.name,email:S.email,role:S.role,score:S.score,ans,total:Q.length,pct,pass,pm,cheats:S.cheats,ct:S.ct,closed,ts:new Date().toLocaleString('en-GB')};
+  saveR(entry);show('sr');
+  $('rtitle').textContent=closed?`Quiz closed — ${S.name}`:(pass?`Well done, ${S.name}!`:`Quiz complete, ${S.name}`);
+  $('rsub').textContent=closed
+    ?`Closed on tab switch at question ${ans}. Pass mark for ${RLBL[S.role]} is ${pm}%.`
+    :(pass?`You passed! Pass mark for ${RLBL[S.role]} is ${pm}%.`:`Score below ${pm}% (${RLBL[S.role]} pass mark) — review the framework and retake when ready.`);
+  $('ms').textContent=`${S.score}/${ans}`;$('mp').textContent=pct+'%';$('mt').textContent=S.cheats;
+  if(S.cheats>0)$('rl').textContent=`Tab switch at: ${S.ct.join(', ')}`;
+  const ar=$('ar');ar.innerHTML='<div class="stitle" style="margin-top:1.5rem">ANSWER REVIEW</div>';
+  S.answers.forEach((a,i)=>{
+    const d=document.createElement('div');d.className='ri';
+    d.innerHTML=`<div style="display:flex;align-items:center;gap:7px;margin-bottom:6px"><span class="tag">Q${i+1}</span><span class="bdg ${a.correct?'bp':'bf'}">${a.correct?'✓ Correct':'✗ Incorrect'}</span></div><div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:5px;line-height:1.5">${a.q}</div>${!a.correct?`<div style="font-size:13px;color:var(--green)">✓ Correct answer: ${a.ct}</div>`:''}`;
+    ar.appendChild(d);
+  });
+  sendEmail(entry);window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function sendEmail(entry){
+  const st=$('ems');st.textContent='Sending result to reviewer…';
+  if(EJS_SVC==='YOUR_SERVICE_ID'){st.textContent='⚠ EmailJS not yet configured — see setup notes in the HTML file.';return;}
+  const lines=[];
+  if(entry.closed)lines.push(`Quiz closed early on tab switch at question ${entry.ans}.`,'');
+  S.answers.forEach((a,i)=>{lines.push(`Q${i+1}: ${a.q}`);lines.push(a.correct?'✓ Correct':`✗ Incorrect — Correct: ${a.ct}`);lines.push('');});
+  emailjs.init(EJS_KEY);
+  emailjs.send(EJS_SVC,EJS_TPL,{
+    n:entry.name,em:entry.email,role:RLBL[entry.role]||entry.role,
+    score:entry.score,total:entry.ans,pct:entry.pct+'%',
+    status:entry.closed?'CLOSED EARLY':(entry.pass?'PASS ✓':'FAIL ✗'),
+    pm:entry.pm+'%',tabs:entry.cheats,
+    tabt:entry.ct.length?entry.ct.join(', '):'None',
+    ts:entry.ts,review:lines.join('\n')
+  }).then(()=>{st.textContent='✓ Result sent to reviewer.';})
+    .catch(err=>{st.textContent='⚠ Email failed — result saved locally. ('+(err.text||err)+')';});
+}
+
+function fromOverlay(){$('tov').classList.remove('show');finish(true);}
+
+function showAdmin(){
+  show('sa');const all=loadR();const el=$('at');
+  if(!all.length){el.innerHTML='<p style="font-size:13px;color:var(--text3)">No results yet.</p>';return;}
+  const sorted=[...all].sort((a,b)=>b.pct-a.pct);const medals=['🥇','🥈','🥉'];let h='';
+  sorted.forEach((r,i)=>{
+    const m=medals[i]||`${i+1}.`;
+    const tb=r.cheats>0?`<span class="bdg bt">⚠ tab</span>`:'';
+    const cb=r.closed?`<span class="bdg bc">closed early</span>`:'';
+    const rb=`<span class="tag" style="font-size:10px">${RLBL[r.role]||r.role||''}</span>`;
+    const sb=`<span class="bdg ${r.pass?'bp':'bf'}">${r.pass?'Pass':(r.closed?'Closed':'Fail')}</span>`;
+    h+=`<div class="lbr"><div style="display:flex;align-items:flex-start;gap:10px"><span style="font-size:14px;min-width:24px;margin-top:1px">${m}</span><div><div class="lbn">${r.name} ${rb} ${tb} ${cb}</div><div class="lbsub">${r.email||''} · ${r.ts}</div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-weight:600;font-size:15px">${r.score}/${r.ans} <span style="font-size:12px;color:var(--text3)">(${r.pct}%)</span></div><div style="margin-top:3px">${sb}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Pass mark: ${r.pm||'—'}%</div></div></div>`;
+  });
+  el.innerHTML=h;window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backAdmin(){const onR=S.answers.length>0;show(onR?'sr':'ss');if(!onR)loadLBP();window.scrollTo({top:0,behavior:'smooth'});}
+
+function resetQ(){
+  S.answers=[];S.inQ=false;S.closed=false;role=null;
+  $('fn').value='';$('fe').value='';$('ems').textContent='';
+  document.querySelectorAll('.ro').forEach(el=>el.classList.remove('sel'));
+  show('ss');loadLBP();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function loadLBP(){
+  const all=loadR();const el=$('lbp');if(!all.length){el.innerHTML='';return;}
+  const sorted=[...all].sort((a,b)=>b.pct-a.pct).slice(0,5);
+  let h='<div class="stitle" style="margin-top:1.5rem;margin-bottom:.75rem">RECENT RESULTS</div><div class="card">';
+  sorted.forEach(r=>{
+    const tb=r.cheats>0?`<span class="bdg bt" style="font-size:10px">⚠ tab</span>`:'';
+    const cb=r.closed?`<span class="bdg bc" style="font-size:10px">closed</span>`:'';
+    h+=`<div class="lbr"><div><div class="lbn">${r.name} ${tb} ${cb}</div><div class="lbsub">${RLBL[r.role]||''} · ${r.ts}</div></div><div style="text-align:right"><div style="font-weight:600;font-size:15px">${r.pct}%</div><div style="margin-top:2px"><span class="bdg ${r.pass?'bp':'bf'}" style="font-size:10px">${r.pass?'Pass':(r.closed?'Closed':'Fail')}</span></div></div></div>`;
+  });
+  h+=`</div><div style="text-align:center;margin-top:.75rem"><button class="btn btns" onclick="viewAllStart()" style="font-size:13px;padding:7px 16px">View all results</button></div>`;
+  el.innerHTML=h;
+}
+
+function viewAllStart(){show('sa');showAdmin();}
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden&&S.inQ){
+    S.cheats++;S.ct.push(new Date().toLocaleTimeString('en-GB'));S.inQ=false;
+    const ans=S.answers.length,pct=ans>0?Math.round((S.score/ans)*100):0;
+    $('osc').textContent=`Score at closing: ${S.score}/${ans} (${pct}%)`;
+    $('tov').classList.add('show');
+  }
+});
+
+loadLBP();
+
+// ─── 50 QUESTIONS ─────────────────────────────────────────────────────────────
+const Q=[
+{cat:"Terminology",diff:"easy",q:"What is Screaming Frog's preferred term for optimising visibility across AI platforms?",opts:["GEO (Generative Engine Optimisation)","AI Search Optimisation","AEO (Answer Engine Optimisation)","LLMO (Large Language Model Optimisation)"],ans:1,exp:"Our preferred umbrella term is 'AI Search Optimisation'. GEO, AEO and LLMO should be acknowledged if clients raise them, but the team should always steer back to our term."},
+{cat:"Metrics & KPIs",diff:"easy",q:"Which of the following is classified as a PRIMARY metric for AI search reporting?",opts:["AI Visibility Score (Sistrix)","Average Citation Position","AI Bot Visits (log files)","Brand Sentiment"],ans:2,exp:"AI Bot Visits are a primary metric sourced from first-party server log files. Visibility scores, citation position and brand sentiment are all secondary / directional indicators."},
+{cat:"Metrics & KPIs",diff:"easy",q:"Why are AI referral sessions expected to be lower than organic traffic?",opts:["AI platforms have fewer users than Google","AI platforms are designed to answer queries directly, reducing the need to click through","Analytics tools cannot accurately track AI sources","AI platforms only send bot traffic, not real users"],ans:1,exp:"AI platforms provide answers within the interface, so users are less likely to click through. This is expected behaviour, not a sign of poor performance."},
+{cat:"Tools & tracking",diff:"easy",q:"Why are third-party AI visibility tools like Sistrix described as 'fallible' in the framework?",opts:["They are too expensive for client reporting","AI responses change on a daily and response-to-response basis due to personalisation and randomness","They do not support UK-based clients","They only track ChatGPT, not other platforms"],ans:1,exp:"There is less than 0.1% chance of brands appearing in the same order across responses. Third-party tools aggregate prompt samples — they show a statistical picture, not a precise figure."},
+{cat:"Tools & tracking",diff:"easy",q:"What does an AI bot visit to a URL actually tell us about potential citation?",opts:["It confirms the URL is being cited in AI responses","It means the page is under consideration and being validated for selection — but a bot can visit without ultimately citing","It confirms the page has passed Google's quality threshold for AI Overviews","It confirms the page has been added to the AI platform's training data"],ans:1,exp:"The framework is clear: AI bots can visit a URL without citing it. A visit means the page is under consideration and being validated for selection — not that a citation has occurred or will occur."},
+{cat:"Strategy & process",diff:"easy",q:"What is the approximate cost and time allocation for an AI Search Audit in month 1?",opts:["£2–3k, 2–3 days","£10k, 10 days","£5k, 5 days","£1k, 1 day"],ans:2,exp:"The AI Search Audit costs approximately £5k and takes around 5 days. Ongoing consultancy is billed at £1,000 per day — the same day rate as other services."},
+{cat:"Strategy & process",diff:"easy",q:"What does 'Query Fan Out (QFO) analysis' help identify?",opts:["Which competitors have the highest domain authority","Sub-topics an LLM may search for when responding to a broader prompt","The exact prompts users type into ChatGPT","Pages with broken internal links"],ans:1,exp:"QFO surfaces the sub-queries an AI platform expands into during grounding, helping identify what content topics an LLM may search for when answering a given prompt."},
+{cat:"Technical SEO",diff:"easy",q:"Which technical file is checked for AI crawler blocking as the first step in a technical review?",opts:["sitemap.xml","llms.txt","robots.txt","Schema.org structured data"],ans:2,exp:"Step 1 of the technical SEO process is reviewing robots.txt for any rules blocking known AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Googlebot-AI etc.)."},
+{cat:"Technical SEO",diff:"easy",q:"Why is JavaScript rendering flagged as an AI search risk?",opts:["JavaScript increases page load times which correlates with lower citation rates","AI platforms generally do not execute JavaScript well — client-side rendered content may not be accessible to them","JavaScript blocks GPTBot at the network level","Google has excluded JS pages from AI Overviews by policy"],ans:1,exp:"AI platforms tend not to execute JavaScript, meaning SPAs and client-side rendered pages may be invisible during the grounding search. SSR or pre-rendering is recommended."},
+{cat:"Client communication",diff:"easy",q:"A client says: 'We can guarantee visibility in ChatGPT after this campaign.' What is wrong with this statement?",opts:["It is too confident — 'probably visible' is the right phrase","AI citations are non-deterministic; guaranteed placement should never be implied","The phrase 'visibility' is not approved agency terminology","ChatGPT is not one of the platforms we track"],ans:1,exp:"'We can guarantee visibility in ChatGPT' is a phrase explicitly to avoid. The correct framing is: 'We can improve the conditions for citation, but AI responses are probabilistic by nature.'"},
+{cat:"Client communication",diff:"easy",q:"How should the agency explain low AI referral sessions to a worried client?",opts:["Admit the campaign has not worked and propose a new strategy","Explain that many users consult AI first, form a preference, then convert via traditional search — this influence is invisible without a referral click","Increase reporting frequency to show more positive trends","Tell the client AI referrals are not a meaningful metric yet"],ans:1,exp:"The recommended response explains the zero-click influence pattern: users consult AI first then convert via organic/paid/direct. AI bot visit data helps evidence this indirect influence."},
+{cat:"Client communication",diff:"easy",q:"A client cannot see their brand in a ChatGPT response even though Sistrix shows a citation. What is the correct explanation?",opts:["The Sistrix data is wrong and should be discounted","AI responses change response-to-response; tools aggregate across many samples and show a statistical picture, not a single ground truth","The client's browser settings are filtering the response","ChatGPT only shows citations on mobile devices"],ans:1,exp:"AI responses are probabilistic and vary each time. Sistrix aggregates across many prompt samples — a single run where the brand doesn't appear doesn't invalidate the data."},
+{cat:"Terminology",diff:"easy",q:"What is an 'AI Overview (AIO)' in Google Search?",opts:["Google's dedicated AI search tab accessible from the main navigation","An AI-generated summary that surfaces at the top of certain Google search results pages","A paid ad format within Google's AI Mode","A report in Google Search Console showing AI referral data"],ans:1,exp:"An AIO is Google's AI-generated summary shown at the top of search results for certain queries. It is distinct from AI Mode, which is an expanded dedicated AI search experience."},
+{cat:"Offsite strategy",diff:"easy",q:"Which platforms are most frequently cited in AI-generated answers, particularly for Google AI Overviews and Perplexity?",opts:["LinkedIn, Twitter/X and Facebook","Reddit, YouTube and Wikipedia, plus earned media outlets","BBC News, The Guardian and The Times","Industry-specific forums and brand websites"],ans:1,exp:"Reddit, YouTube and Wikipedia are consistently among the most cited domains in AI responses. Reddit has the highest AI citation frequency for Google AI Overviews and Perplexity."},
+{cat:"Future of AI search",diff:"easy",q:"What does the framework describe as the next logical step for agentic AI in commercial contexts?",opts:["AI platforms replacing all paid search advertising","A single interface that retrieves information, performs an action and executes a purchase or form submission on behalf of the user","AI bots automatically updating website content based on search trends","AI platforms generating personalised landing pages for each user"],ans:1,exp:"The framework describes agentic AI as moving to a commerce level — a single interface that retrieves information and executes purchases or form submissions on behalf of the user."},
+{cat:"Terminology",diff:"easy",q:"What does MCP stand for in the context of AI search optimisation?",opts:["Machine Content Protocol","Model Context Protocol","Managed Crawl Process","Meta Content Pathway"],ans:1,exp:"MCP stands for Model Context Protocol. It allows AI assistants to retrieve live data from a specific source rather than relying on training data or web search alone — enabling real-time, branded data delivery to AI platforms."},
+{cat:"Strategy & process",diff:"easy",q:"AI Search Optimisation crosses multiple departments. Which teams can impact a client's AI search performance?",opts:["PR and Content only","Technical SEO and Community Managers only","Affiliates & Partnerships, Community Managers, Brand, PR, Content, and Technical SEO — all of the above","Only the SEO team, as AI search is a technical discipline"],ans:2,exp:"The framework states that AI Search Optimisation crosses every department. Affiliates & Partnerships, Community Managers (Reddit & UGC), Brand, PR, Content, and Technical SEO all have an important role to play."},
+{cat:"Terminology",diff:"easy",q:"According to the framework's glossary, what is 'Prompt Engineering' in the context of AI search?",opts:["Writing system prompts to customise LLM behaviour for client tools","The process of building a client's set of prompts from scratch — ideating conversational terms against their core audiences, topics and USPs, using search volumes as a proxy","A technical process for optimising AI model response speed","A/B testing prompt phrasing inside ChatGPT to improve citation rates"],ans:1,exp:"Prompt Engineering means building a client's prompt set from scratch in the absence of search volume data — ideating conversational terms against audiences, topics and USPs, using Google search volumes as a proxy for demand rather than an indicator of it."},
+{cat:"Terminology",diff:"easy",q:"What does RAG stand for, and why does it matter for AI search?",opts:["Rapid Automated Grounding","Retrieval Augmented Generation — the process by which an LLM supplements its pre-trained knowledge with a live web search before generating a response","Ranked Authority Guidance — a scoring method for AI citation potential","Response Accuracy Grading — a quality check performed on AI outputs"],ans:1,exp:"RAG stands for Retrieval Augmented Generation. It is the process by which an LLM supplements its training data with a live web search via Google or Bing before generating a response. This is why traditional SEO fundamentals still matter for AI search."},
+{cat:"Terminology",diff:"easy",q:"According to the glossary, which AI platform is described as best for demonstrating citation to clients — and why?",opts:["ChatGPT, because it has the largest user base","Gemini, because it is tied to Google's index","Perplexity, because it consistently cites its sources alongside responses, making citation tracking transparent","Copilot, because Bing Webmaster Tools provides citation data"],ans:2,exp:"Perplexity consistently cites its sources alongside responses, making it one of the most transparent platforms for citation tracking — and the most effective for demonstrating citations to clients."},
+{cat:"Metrics & KPIs",diff:"medium",q:"Which of these is the correct way to present a secondary metric to a client?",opts:["'Our Sistrix score shows we rank X in AI search'","'This score is a precise measurement of your AI visibility this month'","'As a directional indicator, AI visibility has moved from X to Y over 90 days'","'Third-party tools confirm we appear in all tracked prompts'"],ans:2,exp:"Secondary metrics should always be contextualised with a caveat. Use phrases like 'directional indicator' and never present secondary scores as exact or reproducible figures."},
+{cat:"Metrics & KPIs",diff:"medium",q:"Which tool is used to track 'Owned AI Overviews' as a primary metric?",opts:["GA4","Sistrix","STAT","Screaming Frog Log File Analyser"],ans:2,exp:"Owned AI Overviews — AIO instances where the client's domain is cited — are tracked via STAT against a set of monitored keywords. It is a primary metric."},
+{cat:"Metrics & KPIs",diff:"medium",q:"The framework identifies three gaps in the AI tracking market. Which of these is one of them?",opts:["Lack of integration between Screaming Frog Log File Analyser and GA4","The absence of Google Search Console citation data for AI Mode and AI Overviews at query and page level","No ability to segment AI referral sessions by device type","The lack of sentiment scoring in Bing Webmaster Tools"],ans:1,exp:"The three tracking gaps are: (1) AI search impact on wider channels via zero-click, (2) Google Search Console not providing AI citation data at query/page level, and (3) the absence of prompt search volume data."},
+{cat:"Strategy & process",diff:"medium",q:"When should the PR team be kept informed during an AI search project?",opts:["Only when there is a specific outreach campaign to execute","Only at the quarterly business review","At all times — PR should be kept up to date on work done and key findings for offsite ideation and strategy","Only when the client requests it"],ans:2,exp:"The framework states the PR team must be kept up to date on the work being done and key findings for offsite ideation and strategy where this is a service."},
+{cat:"Strategy & process",diff:"medium",q:"What is the recommended approach to testing AI search recommendations?",opts:["Apply all recommendations immediately to maximise speed","Frame all recommendations as confirmed best practice to build client confidence","Subject all hypotheses to SEO testing — recommendations may not work across all industries","Only test on clients with a minimum 6-month retainer"],ans:2,exp:"The framework explicitly says to avoid framing hypotheses as best practice. All recommendations — from personal analysis, anecdotal evidence or perceived best practices — should be subject to SEO testing."},
+{cat:"Strategy & process",diff:"medium",q:"What is the estimated time for a 'Query Fan Out Analysis' as a standalone strategic task?",opts:["Half a day","1–2 days","5 days","Same as the AI Search Audit"],ans:1,exp:"Query Fan Out Analysis is estimated at 1–2 days. It is a dedicated task that broadens out review of fan out terms for other keywords and topics — useful for both onsite and offsite content ideation."},
+{cat:"Onsite content",diff:"medium",q:"What is the specific purpose of the 'AIO Gap Analysis' step in the onsite content process?",opts:["Identifying keywords where AI Overviews appear but the client isn't cited — either from Ahrefs or STAT analysis","Exporting all competitor AIO citations for manual review","Finding pages where the client's AIO citation was lost after a content update","Identifying pages that rank in position 1 but do not appear in any AI Overview"],ans:0,exp:"The AIO Gap Analysis identifies keywords where an AI Overview is present but the client is not cited — using Ahrefs or STAT analysis. The output is a prioritised list of missed AIO citation opportunities."},
+{cat:"Onsite content",diff:"medium",q:"How does the framework describe content freshness in relation to AI platforms?",opts:["AI platforms favour older, more established content as it has more backlinks","AI platforms show a recency bias — cornerstone content not updated in 6–12 months should be flagged as a hygiene task","Content freshness only matters for news and editorial sites","AI platforms do not consider publication dates when selecting content to cite"],ans:1,exp:"The framework says AI platforms show a recency bias — particularly for time-sensitive topics. Cornerstone content not updated in 6–12 months should be flagged as a low-priority but meaningful hygiene task."},
+{cat:"Technical SEO",diff:"medium",q:"What specific evidence does the framework cite for recommending structured data, despite it not being essential for AI citation?",opts:["Screaming Frog internal testing showed a 15% citation uplift after schema implementation","Both Google and Bing have confirmed structured data is computationally cheaper to process for AI platforms","It directly instructs AI platforms which passages to cite via FAQPage schema","Third-party Sistrix scores improve significantly when schema is added"],ans:1,exp:"The recommended framing is: 'Evidence suggests structured data supports AI citation. It's computationally cheaper for AI platforms to process.' Never present schema as essential — it's a low-risk improvement, not a confirmed citation driver."},
+{cat:"Technical SEO",diff:"medium",q:"When reviewing robots.txt, what else should be checked beyond the client's own site?",opts:["The robots.txt files of all competitor domains","Any third-party partner or affiliate domains where relevant","Only the client's subdomain and subdirectory configurations","The robots.txt of AI platforms themselves"],ans:1,exp:"The framework says to also check any third-party partner or affiliate domains where relevant. A partner blocking AI bots could limit citation opportunities for the client."},
+{cat:"Offsite strategy",diff:"medium",q:"What are the four relevancy labels used in the Ideation Brief for PR?",opts:["Primary, Secondary, Tertiary, Exploratory","Brand, Product, Competitor, Industry","Core, Topical, Audience, Broad","Tier 1, Tier 2, Tier 3, Tier 4"],ans:2,exp:"The framework specifies the Ideation Brief uses relevancy labels: Core, Topical, Audience, and Broad. These help the PR team prioritise which content ideas are most likely to land in high-value AI-cited publications."},
+{cat:"Offsite strategy",diff:"medium",q:"What is the correct priority order for ranking AI-Cited Page Opportunities for outreach?",opts:["Page authority, then prompt commercial intent, then citation frequency","AI citation frequency, then prompt commercial intent, then referring page authority","Referring page authority, then page traffic, then brand sentiment score","Commercial intent, then page authority, then recency of the cited page"],ans:1,exp:"The framework specifies: (1) AI citation frequency, (2) prompt commercial intent, (3) referring page authority. This is used for outreach target list prioritisation."},
+{cat:"Offsite strategy",diff:"medium",q:"What does the 'Review Platform Audit' step in the offsite process assess?",opts:["Which review platforms the client currently advertises on","The client's average rating, recency of reviews, and volume of unanswered negative reviews — across platforms cited in tracked AI prompt responses","Whether the client's Google Business Profile is verified","The domain authority of review platforms to prioritise for link building"],ans:1,exp:"The Review Platform Audit identifies review platforms cited across tracked prompts, then assesses average rating, recency of reviews, and volume of unanswered negative reviews — outputting a priority response strategy for the community team."},
+{cat:"Offsite strategy",diff:"medium",q:"What does the 'Brand Accuracy' step in the offsite process involve, and why is it a high priority?",opts:["Checking the client's brand name is spelled correctly across all backlinks","Reviewing how AI platforms describe the brand across tracked prompt responses — flagging inaccuracies, outdated information or missing USPs, then identifying source pages feeding incorrect information","Auditing the client's social media profiles for outdated brand assets","Verifying that brand mentions in third-party articles link back to the correct domain"],ans:1,exp:"Brand Accuracy is a high-priority offsite task. Flag inaccuracies and identify the source pages feeding incorrect information, then work with the client to update those pages or submit corrections. AI platforms can actively spread outdated or wrong brand information at scale."},
+{cat:"Client communication",diff:"medium",q:"A client asks: 'Is good SEO just good GEO?' What is the recommended framing?",opts:["'Yes — if your SEO is strong, AI search will take care of itself'","'No — AI search is entirely different and requires starting from scratch'","'Great SEO gives you a strong head start, but AI search adds a layer SEO doesn't ask — which AI-cited pages are you missing from? What is the AI saying about you?'","'GEO is our proprietary methodology that builds on SEO principles'"],ans:2,exp:"Use the Venn diagram framing: SEO fundamentals carry over, but AI search adds a specific analytical layer — cited page gaps, brand sentiment in responses — that requires its own dedicated analysis."},
+{cat:"Client communication",diff:"medium",q:"When a team member says 'The AI cited our page!', what is the correct professional reframe?",opts:["Celebrate with the client immediately and use it as a case study","Reframe to data: 'Our page was cited in X% of tracked prompts across [platform]' — this is how the team should present citation evidence, not as anecdote","Confirm this as a primary metric result and report it immediately","Screenshot it and include it in the next monthly report as proof"],ans:1,exp:"'The AI cited our page!' is employee-side phrasing to avoid. The correct professional framing is always data-led: 'Our page was cited in X% of tracked prompts across [platform].' Anecdote vs. data — always quantify."},
+{cat:"Client communication",diff:"medium",q:"How should the agency describe the overlap between AI search and SEO?",opts:["Agree they are completely different and position AI search as a replacement for SEO","AI search overlaps significantly with SEO fundamentals, with some key differences — use the Venn diagram framing","Tell the client SEO is no longer relevant","Explain that AI search only applies to ChatGPT, not to Google products"],ans:1,exp:"The framework uses a Venn diagram framing: things that work for SEO, things that work for both, and AI-specific tactics on top. Both extremes — 'AI is completely different' and 'good SEO is all you need' — are phrases explicitly to avoid."},
+{cat:"Terminology",diff:"medium",q:"How does the framework define 'Grounding' in the context of LLMs?",opts:["The process of verifying AI-generated content is factually accurate before publishing","The retrieval step where an LLM searches the web to gather current information — pages returned here are the primary candidates for citation","The method by which AI platforms train their models on new content","The process of adding structured data so AI platforms can understand pages"],ans:1,exp:"Grounding is the retrieval component of RAG — the step where an LLM searches the web for current, factual information. The pages returned by this grounding search are the primary candidates for citation."},
+{cat:"Terminology",diff:"medium",q:"What is an 'AIO Fragment URL' and how is it used?",opts:["A shortened URL used to track AI Overview clicks in GA4","A specific page with a # identifier in the URL on a competitor's site being cited in AI Overviews — used to inform content gap analysis and outreach strategy","A URL parameter added to monitor which AI platform sent a referral session","A Screaming Frog report showing pages with AI Overview citations"],ans:1,exp:"An AIO Fragment URL is a page with a # identifier being cited in AI Overviews. Export from Ahrefs keyword analysis, include in the audit spreadsheet and prioritise by search volume and relevance."},
+{cat:"Metrics & KPIs",diff:"hard",q:"What is 'Multi-Touch Attribution' in the AI search context, and why does it matter for reporting?",opts:["A GA4 report showing the last click before conversion across all channels","A model tracking how AI search influences later conversions across other channels — critical for explaining why AI referral volume understates AI's actual commercial impact","A Screaming Frog tool correlating log file data with GA4 conversions","The process of attributing credit to multiple prompt appearances before a brand is cited"],ans:1,exp:"Multi-Touch Attribution tracks AI's influence on subsequent conversions through other channels. It explains why low AI referral sessions do not mean AI is not driving value."},
+{cat:"Metrics & KPIs",diff:"hard",q:"How does the framework recommend calculating 'AIO Tax' — and what data sources are required?",opts:["Comparing organic traffic before and after AI Mode launched using GA4 year-on-year data","Comparing baseline CTR for a ranking position against CTR when an AIO is present — using GSC data combined with AIO presence data","Dividing AI referral sessions by total organic sessions to get a percentage impact","Subtracting secondary metric visibility scores from the previous period's scores"],ans:1,exp:"AIO Tax is calculated by comparing baseline CTR for a given ranking position against CTR when an AIO is present (with or without citation) — using GSC data combined with AIO presence data from tools like STAT."},
+{cat:"Metrics & KPIs",diff:"hard",q:"How should the agency currently approach measuring AI search's impact on wider channels given the zero-click tracking gap?",opts:["Tell clients this cannot be measured at all until Google releases AI citation data","Assess for spikes in visibility and LLM user-bot crawl data and correlate with GA4 data on direct, paid and organic to assess impact","Use Sistrix share of voice as a direct proxy for cross-channel AI influence","Measure only AI referral sessions and ignore zero-click entirely"],ans:1,exp:"The framework acknowledges the zero-click tracking gap but says: assess for spikes in visibility and LLM user-bot crawl data and correlate with GA4 data on direct, paid and organic. It's an imperfect but available approach."},
+{cat:"Tools & tracking",diff:"hard",q:"What does the framework say about how Bing Webmaster Tools differs from other AI tracking sources?",opts:["It provides real-time prompt tracking across all major AI platforms","It is one of the only platforms offering first-party AI citation data — making it a primary metric source for Bing AI Summaries and Copilot","It offers historical citation data going back 24 months","It tracks both ChatGPT and Copilot citations via a unified dashboard"],ans:1,exp:"Bing Webmaster Tools provides first-party AI citation tracking for Bing AI Summaries and Copilot — one of the few platforms offering this. Access should be requested at onboarding."},
+{cat:"Client communication",diff:"hard",q:"A client asks about a new affiliate opportunity: 'Will this get us cited in AI responses?' What is the recommended response?",opts:["Confirm that any cited page will carry the brand mention into AI responses within 48–72 hours","While we cannot guarantee visibility, this affiliate opportunity appears for X prompts making it one of our most valuable placements — it improves the conditions for citation. We'll monitor bot crawl data and prompt tracking over 4–8 weeks","Tell the client it depends on whether the partner site has llms.txt implemented","Agree this is a guaranteed citation opportunity and price accordingly"],ans:1,exp:"The recommended response leads with value: 'While we cannot guarantee visibility, this affiliate opportunity appears for X prompts making it one of our most valuable placements that improves conditions for citation.' Then commit to monitoring over 4–8 weeks. Never imply a guarantee."},
+{cat:"Client communication",diff:"hard",q:"When a client asks 'How can you be sure these prompts are right with no volume data?', what is the recommended explanation?",opts:["Explain that AI platforms share anonymised prompt data with certified agency partners","Prompts are built from the client's core business topics, audiences and USPs — Google search volumes are used as a rough proxy to sense-check demand, not as a direct equivalent","Prompt selection is based purely on competitor citation analysis","Tell the client prompt selection will be validated once GSC provides AI citation data"],ans:1,exp:"Build prompts from core commercial topics, audiences and USPs. Use Google search volumes as a rough proxy to sense-check demand. Be honest that prompt volume data doesn't exist and is unlikely to change given the personal nature of LLM conversations."},
+{cat:"Terminology",diff:"hard",q:"The framework describes a trade-off when a client is blocking AI crawlers in robots.txt. What is the correct framing?",opts:["Blocking AI crawlers is always wrong and should be immediately reversed","Blocking AI crawlers is a legitimate choice, but it comes with a trade-off for AI search visibility — discuss the right balance for the client's business","Blocking AI crawlers has no impact on citation frequency as LLMs use pre-trained data only","Blocking AI crawlers is only relevant for ChatGPT — other platforms ignore robots.txt"],ans:1,exp:"The framework frames bot-blocking as a nuanced decision: blocking prevents training data collection but may reduce citation frequency. Never tell a client it is simply wrong — frame it as a trade-off and discuss the right balance for their specific business."},
+{cat:"Offsite strategy",diff:"hard",q:"What does the framework say about Reddit's role in AI search and what action should community managers take?",opts:["Reddit is too unstructured to be a reliable AI citation source","Reddit is one of the most frequently cited domains in AI responses. Include Reddit thread review in all Offsite Reviews and work with community managers on a response strategy for negative threads","Reddit citations are only relevant for consumer brands, not B2B clients","Reddit should only be monitored if the client is already active on the platform"],ans:1,exp:"Reddit is one of the most frequently cited domains — particularly for Google AI Overviews and Perplexity. Include Reddit thread review in all Offsite Reviews and work with community managers on responses to negative threads. Community perception directly influences how AI platforms describe your brand."},
+{cat:"Terminology",diff:"hard",q:"What does the framework say about 'High Buying-Intent Prompts' and how should tracking credits be allocated?",opts:["Awareness-stage prompts should always be prioritised as they reach the largest audience","High buying-intent prompts sit at consideration or conversion stage and should be prioritised over awareness-stage prompts when allocating tracking credits","All prompts should be weighted equally regardless of buyer journey stage","Buying-intent prompts are only relevant for e-commerce clients"],ans:1,exp:"High buying-intent prompts (e.g. 'best [product category] companies', 'where to buy [product]') are the most commercially valuable. Prioritise these when allocating tracking credits. Frame to clients as 'the prompts most likely to influence a purchase decision.'"},
+{cat:"Strategy & process",diff:"hard",q:"What does the framework say about Sentiment Analysis — how long does it take and what are the outputs?",opts:["It is a one-off task completed in the AI Search Audit with no specific time allocation","It is estimated at 2 days — the output is a sentiment summary and priority review platforms and Reddit threads to address","It is completed as part of the Prompt Gap Analysis with no separate time allocation","It is an ongoing automated task with no manual time required"],ans:1,exp:"Sentiment Analysis is estimated at 2 days. The output is a sentiment summary with priority review platforms and Reddit threads to address, feeding into recommendations for community managers and/or brand copywriters."},
+{cat:"Technical SEO",diff:"hard",q:"What does the framework say about assessing MCP servers as part of an AI integration protocols review?",opts:["All clients should immediately set up a consumer-facing MCP server as a priority recommendation","Assess whether a consumer-facing MCP server could be relevant for the client's business model — still emerging, frame as an opportunity to explore, not a standard recommendation","MCP servers are only relevant for developer-facing tools","MCP servers replace the need for structured data"],ans:1,exp:"The framework says to assess whether a consumer-facing MCP server could be relevant for the client's business model. It is still emerging — frame it as an opportunity to explore, not a standard recommendation. Distinguish between developer-facing and consumer-facing use cases."},
+{cat:"Terminology",diff:"hard",q:"What does the framework say about llms.txt — and how should it be positioned to clients?",opts:["A confirmed citation driver that should be prioritised in month 1","A file Google has publicly stated no major LLM currently uses — implement as a hygiene step if already present, not a strategic priority","A replacement for robots.txt that controls AI bot access","A Screaming Frog proprietary format for structured content delivery to LLMs"],ans:1,exp:"Google has publicly compared llms.txt to the keywords meta tag. The framework says never to position it as a citation driver — implement only as a hygiene step if the file is already present."},
+{cat:"Strategy & process",diff:"hard",q:"What is the correct priority order for exporting and ranking AI-Cited Page Opportunities from Sistrix?",opts:["Page authority, then prompt commercial intent, then citation frequency","AI citation frequency, then prompt commercial intent, then referring page authority","Referring page authority, then page traffic, then brand sentiment score","Commercial intent, then page authority, then recency of the cited page"],ans:1,exp:"The framework specifies: (1) AI citation frequency, (2) prompt commercial intent, (3) referring page authority. This is used for outreach target list prioritisation — export from the Sistrix Sources tab."},
+];
+</script>
+</body>
+</html>
